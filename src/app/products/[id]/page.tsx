@@ -15,12 +15,6 @@ type Product = {
   thumbnail: string;
 };
 
-// ✅ Shared type for params
-type PageProps = {
-  params: {
-    id: string;
-  };
-};
 
 // Static paths for pre-rendering
 export async function generateStaticParams() {
@@ -33,7 +27,10 @@ export async function generateStaticParams() {
 }
 
 // ✅ Properly typed generateMetadata function
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata(
+  { params }: { params: { id: string } }
+): Promise<Metadata> {
+
   const res = await fetch(`https://dummyjson.com/products/${params.id}`);
 
   if (!res.ok) {
@@ -73,7 +70,10 @@ function renderStars(rating: number) {
 }
 
 // ✅ Properly typed default export
-export default async function ProductDetail({ params }: PageProps) {
+export default async function ProductDetail(
+  { params }: { params: { id: string } }
+) {
+
   const res = await fetch(`https://dummyjson.com/products/${params.id}`);
 
   if (!res.ok) {
