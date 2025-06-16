@@ -5,10 +5,11 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'cdn.dummyjson.com',
-        pathname: '**', // allow all paths from the domain
+        hostname: '**.dummyjson.com', // allow subdomains like cdn., i., etc.
+        pathname: '**',
       },
     ],
+    domains: ['dummyjson.com'], // this is still useful as fallback
   },
 };
 

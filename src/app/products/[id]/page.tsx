@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
 import { FaStarHalfAlt } from 'react-icons/fa';
@@ -15,6 +16,12 @@ type Product = {
   thumbnail: string;
 };
 
+// ✅ Define shared PageProps interface to satisfy Next.js constraints
+interface PageProps {
+  params: {
+    id: string;
+  };
+}
 
 // Static paths for pre-rendering
 export async function generateStaticParams() {
@@ -26,11 +33,10 @@ export async function generateStaticParams() {
   }));
 }
 
-// ✅ Properly typed generateMetadata function
+// ✅ Typed generateMetadata using shared PageProps interface
 export async function generateMetadata(
-  { params }: { params: { id: string } }
+  { params }: PageProps
 ): Promise<Metadata> {
-
   const res = await fetch(`https://dummyjson.com/products/${params.id}`);
 
   if (!res.ok) {
@@ -69,11 +75,8 @@ function renderStars(rating: number) {
   return <div className="flex items-center gap-1">{stars}</div>;
 }
 
-// ✅ Properly typed default export
-export default async function ProductDetail(
-  { params }: { params: { id: string } }
-) {
-
+// ✅ Typed default export using shared PageProps
+export default async function ProductDetail({ params }: PageProps) {
   const res = await fetch(`https://dummyjson.com/products/${params.id}`);
 
   if (!res.ok) {
@@ -94,9 +97,11 @@ export default async function ProductDetail(
         <h1 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">{product.title}</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-[5vh]">
-          <img
+          <Image
             src={product.thumbnail}
             alt={product.title}
+            width={500}
+            height={300}
             className="w-full h-64 object-cover rounded"
           />
 
