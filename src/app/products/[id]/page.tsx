@@ -95,7 +95,7 @@ export default function ProductDetails() {
   }
 
   return (
-    <main className="min-h-screen w-full bg-blue-600/20 text-black">
+    <main className="min-h-screen w-full bg-blue-300/20 text-black">
       <header className="fixed top-0 left-0 w-full bg-blue-600 text-white py-4 px-6 shadow border-b-2 border-white z-50">
         <Link
           href="/"
