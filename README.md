@@ -2,7 +2,7 @@
 
 A clean, responsive, and interactive product catalog dashboard built with **Next.js 13+ (App Router)**, **Tailwind CSS**, **TypeScript**, and **React Query**. This project demonstrates strong frontend architecture, reusable components, responsive design, and modern state management practices.
 
-> 👨‍💻 Developed by [Philemon Victor Odera](https://www.linkedin.com/in/engineer-philemon/)  
+> 👨‍💻 Developed by [Philemon Victor ](https://www.linkedin.com/in/engineer-philemon/)  
 > 📫 Email: victorphilemon001@gmail.com | 🌐 GitHub: [PhilTech-Hub](https://github.com/PhilTech-Hub)
 
 ---
@@ -99,8 +99,8 @@ Deploy to Vercel or Netlify.
 This project is licensed under the MIT License.
 
 🙋‍♂️ About the Developer
-Philemon Victor Odera
-Full-stack Developer | Frontend Specialist
+Philemon Victor
+AI Developer | Full-stack Developer | Frontend Developer
 🎯 Passionate about clean UIs, DX, and scalable design systems
 🌍 Based in Nairobi, Kenya
 📫 Reach me at victorphilemon001@gmail.com
