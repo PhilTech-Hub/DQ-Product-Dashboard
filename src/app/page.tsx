@@ -37,20 +37,16 @@ export default function Home() {
     },
   });
 
-  // Show skeletons only after slight delay
   useEffect(() => {
     let timeout: NodeJS.Timeout;
-
     if (isLoading) {
       timeout = setTimeout(() => setShowSkeletons(true), 300);
     } else {
       setShowSkeletons(false);
     }
-
     return () => clearTimeout(timeout);
   }, [isLoading]);
 
-  // Filtering, sorting
   useEffect(() => {
     if (!products) return;
 
@@ -88,77 +84,99 @@ export default function Home() {
   );
 
   return (
-    <div className="p-4 max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Product Dashboard</h1>
+    <main className="min-h-screen w-full bg-blue-600/20 text-black">
+      <header className="fixed top-0 left-0 w-full bg-blue-600 text-white py-4 px-6 shadow border-b-2 border-white z-50">
+        <h1 className="text-2xl font-bold">Product Dashboard</h1>
+      </header>
 
-      {/* Controls */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
-        <SearchBar value={searchTerm} onChange={setSearchTerm} />
-        <FilterDropdown
-          categories={categories}
-          selected={selectedCategory}
-          onChange={setSelectedCategory}
-        />
-        <select
-          value={sortOrder}
-          onChange={(e) => setSortOrder(e.target.value)}
-          className="border border-gray-300 rounded px-4 py-2 w-full sm:w-64"
-        >
-          <option value="">Sort By</option>
-          <option value="priceLowHigh">Price: Low to High</option>
-          <option value="priceHighLow">Price: High to Low</option>
-          <option value="ratingHighLow">Rating: High to Low</option>
-        </select>
-      </div>
+      <div className="p-4 max-w-6xl mx-auto mt-[7vh]">
 
-      {/* Loading States */}
-      {isLoading ? (
-        !showSkeletons ? (
-          <div className="flex justify-center items-center min-h-[40vh]">
-            <Spinner />
+        {/* Controls */}
+        <div className="flex flex-col sm:flex-row gap-10 mb-8">
+          <div className='bg-white border border-gray-300 rounded px-2 py-1 w-full sm:w-68'>
+            <SearchBar value={searchTerm} onChange={setSearchTerm} />
           </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {Array.from({ length: 8 }).map((_, index) => (
-              <SkeletonCard key={index} />
-            ))}
-          </div>
-        )
-      ) : error ? (
-        <p className="text-center text-red-500 mt-6">Failed to load products.</p>
-      ) : (
-        <>
-          {/* Products */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {paginatedProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+          <div className='bg-white border border-gray-300 rounded px-2 py-2 w-full sm:w-68'>
+            <FilterDropdown
+              categories={categories}
+              selected={selectedCategory}
+              onChange={setSelectedCategory}
+            />
           </div>
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex justify-center items-center gap-4 mt-8">
-              <button
-                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                disabled={currentPage === 1}
-                className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-              >
-                Previous
-              </button>
-              <span className="px-4 py-2 text-sm font-medium">
-                Page {currentPage} of {totalPages}
-              </span>
-              <button
-                onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-                disabled={currentPage === totalPages}
-                className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-              >
-                Next
-              </button>
+          <select
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+            className='bg-white border border-gray-200 rounded px-2 py-2 w-full sm:w-68 h-full sm:h-14'
+          >
+            <option value="">Sort By</option>
+            <option value="priceLowHigh">Price: Low to High</option>
+            <option value="priceHighLow">Price: High to Low</option>
+            <option value="ratingHighLow">Rating: High to Low</option>
+          </select>
+        </div>
+
+        {/* Loading States */}
+        {isLoading ? (
+          !showSkeletons ? (
+            <div className="flex justify-center items-center min-h-[40vh]">
+              <Spinner />
             </div>
-          )}
-        </>
-      )}
-    </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {Array.from({ length: 8 }).map((_, index) => (
+                <SkeletonCard key={index} />
+              ))}
+            </div>
+          )
+        ) : error ? (
+          <div className="text-center text-red-500 mt-6">
+            <p className="font-semibold text-lg">Oops! Something went wrong.</p>
+            <p className="text-sm">{(error as Error).message || 'Unable to fetch products from the server.'}</p>
+          </div> 
+        ) : (
+          <>
+            {/* Products */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {paginatedProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-4 mt-8">
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+                >
+                  Previous
+                </button>
+                <span className="px-4 py-2 text-sm font-medium">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+      <footer className="w-full bg-gray-700 text-white py-6 px-6 mt-12 shadow-inner border-t border-gray-700">
+        <div className="max-w-6xl mx-auto flex justify-center items-center text-center">
+          <p className="text-sm text-gray-200">
+            Product Dashboard | &copy; {new Date().getFullYear()} Philemon Victor. All rights reserved.
+          </p>
+        </div>
+      </footer>
+
+
+    </main>
   );
 }
