@@ -1,12 +1,11 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { notFound, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
 import { FaStarHalfAlt } from 'react-icons/fa';
-import { Suspense } from 'react';
 
 type Product = {
   id: number;
@@ -19,14 +18,12 @@ type Product = {
   thumbnail: string;
 };
 
-// ⭐️ Fetch function
 const fetchProduct = async (id: string): Promise<Product> => {
   const res = await fetch(`https://dummyjson.com/products/${id}`);
   if (!res.ok) throw new Error('Failed to fetch product');
   return res.json();
 };
 
-// ⭐️ Star Renderer
 function renderStars(rating: number) {
   const stars = [];
   const fullStars = Math.floor(rating);
@@ -47,7 +44,6 @@ function renderStars(rating: number) {
   return <div className="flex items-center gap-1">{stars}</div>;
 }
 
-// ✅ Main Product Detail Page
 export default function ProductDetailPage() {
   const params = useParams();
   const id = params?.id as string;
@@ -55,8 +51,7 @@ export default function ProductDetailPage() {
   const {
     data: product,
     isLoading,
-    isError,
-    error,
+    isError
   } = useQuery({
     queryKey: ['product', id],
     queryFn: () => fetchProduct(id),
