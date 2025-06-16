@@ -15,16 +15,24 @@ export default function FilterDropdown({
     <select
       value={selected} // Controlled component: value comes from parent state
       onChange={(e) => onChange(e.target.value)} // Call the parent handler on change
-      className="border border-gray-300 rounded px-4 py-2 w-full sm:w-64" // Tailwind styles for border, spacing, and responsive width
+      className="w-full border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-200 px-4 py-2 rounded" // Tailwind styles for border, spacing, and responsive width
     >
       {/* Default option to reset or show all categories */}
       <option value="">All Categories</option>
 
       {/* Dynamically render each category as a selectable option */}
       {categories.map((cat) => (
-        <option key={cat} value={cat}>
+        <option
+          key={cat}
+          value={cat}
+          className="bg-blue-300/20 backdrop-blur-md text-blue rounded-b-2xl"
+        >
           {cat}
         </option>
+
+
+
+
       ))}
     </select>
   );

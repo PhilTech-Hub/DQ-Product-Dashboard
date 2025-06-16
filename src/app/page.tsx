@@ -117,10 +117,10 @@ export default function Home() {
 
         {/* 🎛️ Search, Filter, and Sort Controls */}
         <div className="flex flex-col sm:flex-row gap-10 mb-8">
-          <div className='bg-white border border-gray-300 rounded px-2 py-1 w-full sm:w-68'>
+          <div className='bg-white border border-gray-300 rounded px-2 py-2 w-full sm:w-69'>
             <SearchBar value={searchTerm} onChange={setSearchTerm} />
           </div>
-          <div className='bg-white border border-gray-300 rounded px-2 py-2 w-full sm:w-68'>
+          <div className='bg-white border border-gray-300 rounded px-2 py-3 w-full sm:w-68'>
             <FilterDropdown
               categories={categories}
               selected={selectedCategory}
@@ -133,10 +133,10 @@ export default function Home() {
             onChange={(e) => setSortOrder(e.target.value)}
             className='bg-white border border-gray-200 rounded px-2 py-2 w-full sm:w-68 h-full sm:h-14'
           >
-            <option value="">Sort By</option>
-            <option value="priceLowHigh">Price: Low to High</option>
-            <option value="priceHighLow">Price: High to Low</option>
-            <option value="ratingHighLow">Rating: High to Low</option>
+            <option value="" className='bg-blue-300/20 backdrop-blur-md text-blue'>Sort By</option>
+            <option value="priceLowHigh" className='bg-blue-300/20 backdrop-blur-md text-blue'>Price: Low to High</option>
+            <option value="priceHighLow" className='bg-blue-300/20 backdrop-blur-md text-blue'>Price: High to Low</option>
+            <option value="ratingHighLow" className='bg-blue-300/20 backdrop-blur-md text-blue'>Rating: High to Low</option>
           </select>
         </div>
 
