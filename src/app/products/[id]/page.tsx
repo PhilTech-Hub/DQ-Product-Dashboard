@@ -1,9 +1,12 @@
-import { notFound } from 'next/navigation';
-import type { Metadata } from 'next';
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+import { notFound, useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
 import { FaStarHalfAlt } from 'react-icons/fa';
+import { Suspense } from 'react';
 
 type Product = {
   id: number;
@@ -16,45 +19,14 @@ type Product = {
   thumbnail: string;
 };
 
-// ✅ Define shared PageProps interface to satisfy Next.js constraints
-interface PageProps {
-  params: {
-    id: string;
-  };
-}
+// ⭐️ Fetch function
+const fetchProduct = async (id: string): Promise<Product> => {
+  const res = await fetch(`https://dummyjson.com/products/${id}`);
+  if (!res.ok) throw new Error('Failed to fetch product');
+  return res.json();
+};
 
-// Static paths for pre-rendering
-export async function generateStaticParams() {
-  const res = await fetch('https://dummyjson.com/products?limit=100');
-  const data = await res.json();
-
-  return data.products.map((product: Product) => ({
-    id: product.id.toString(),
-  }));
-}
-
-// ✅ Typed generateMetadata using shared PageProps interface
-export async function generateMetadata(
-  { params }: PageProps
-): Promise<Metadata> {
-  const res = await fetch(`https://dummyjson.com/products/${params.id}`);
-
-  if (!res.ok) {
-    return {
-      title: 'Product Not Found',
-      description: 'No product found for this ID.',
-    };
-  }
-
-  const product: Product = await res.json();
-
-  return {
-    title: product.title,
-    description: product.description,
-  };
-}
-
-// Renders star icons
+// ⭐️ Star Renderer
 function renderStars(rating: number) {
   const stars = [];
   const fullStars = Math.floor(rating);
@@ -75,28 +47,52 @@ function renderStars(rating: number) {
   return <div className="flex items-center gap-1">{stars}</div>;
 }
 
-// ✅ Typed default export using shared PageProps
-export default async function ProductDetail({ params }: PageProps) {
-  const res = await fetch(`https://dummyjson.com/products/${params.id}`);
+// ✅ Main Product Detail Page
+export default function ProductDetailPage() {
+  const params = useParams();
+  const id = params?.id as string;
 
-  if (!res.ok) {
-    notFound();
+  const {
+    data: product,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ['product', id],
+    queryFn: () => fetchProduct(id),
+  });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-lg text-gray-600">
+        Loading product details...
+      </div>
+    );
   }
 
-  const product: Product = await res.json();
+  if (isError || !product) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-red-500 text-lg">
+        Failed to load product. Please try again later.
+      </div>
+    );
+  }
 
   return (
     <main className="min-h-screen w-full bg-blue-600/20 text-black">
       <header className="fixed top-0 left-0 w-full bg-blue-600 text-white py-4 px-6 shadow border-b-2 border-white z-50">
-        <Link href="/" className="bg-gray-400 rounded p-3 m-[0] py-1 text-white hover:none mb-4 inline-block font-bold">
+        <Link
+          href="/"
+          className="bg-gray-400 rounded p-3 py-1 text-white font-bold inline-block"
+        >
           ← Back to Products
         </Link>
       </header>
 
-      <div className="max-w-4xl mx-auto p-4 bg-white dark:bg-gray-900 shadow-md rounded-lg mt-[9vh]">
+      <div className="max-w-4xl mx-auto p-4 bg-white dark:bg-gray-900 shadow-md rounded-lg mt-[10vh]">
         <h1 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">{product.title}</h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-[5vh]">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
           <Image
             src={product.thumbnail}
             alt={product.title}
