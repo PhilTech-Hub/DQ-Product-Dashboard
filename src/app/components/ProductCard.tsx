@@ -1,8 +1,7 @@
 'use client'; // Marks this component as a client-side component in Next.js 13+
 
 import Link from 'next/link'; // Link component for client-side navigation between pages
-import { AiFillStar, AiOutlineStar } from 'react-icons/ai'; // Importing star icons for full and empty stars
-import { FaStarHalfAlt } from 'react-icons/fa'; // Import half star icon
+import { FaStar, FaRegStar, FaStarHalfAlt } from 'react-icons/fa';// Importing star icons for full and empty stars and Import half star icon
 
 // Defining the Product type structure for type safety
 type Product = {
@@ -21,18 +20,18 @@ function renderStars(rating: number) {
   const hasHalfStar = rating % 1 >= 0.5; // Check if the rating includes a half star
 
   // Render full stars based on the rating
-  for (let i = 0; i < fullStars; i++) {
-    stars.push(<AiFillStar key={`full-${i}`} className="text-yellow-500" />); // Full yellow star
+ for (let i = 0; i < fullStars; i++) {
+    stars.push(<FaStar key={`full-${i}`} className="text-yellow-500 text-xl" />);
   }
 
   // Render half star if applicable
   if (hasHalfStar) {
-    stars.push(<FaStarHalfAlt key="half" className="text-yellow-500" />); // Half yellow star
+    stars.push(<FaStarHalfAlt key="half" className="text-yellow-500 text-xl"/>); // Half yellow star
   }
 
   // Render empty stars to complete the 5-star scale
   while (stars.length < 5) {
-    stars.push(<AiOutlineStar key={`empty-${stars.length}`} className="text-yellow-500" />); // Empty gray star
+    stars.push(<FaRegStar key={`empty-${stars.length}`} className="text-yellow-500 text-xl" />);
   }
 
   // Return the stars as a JSX element

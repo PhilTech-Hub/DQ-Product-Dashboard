@@ -1,11 +1,14 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { notFound } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
-import { FaStarHalfAlt } from 'react-icons/fa';
+import { FaStar, FaRegStar, FaStarHalfAlt } from 'react-icons/fa';
+import Spinner from '@/app/components/Spinner';
+import SkeletonCard from '@/app/components/SkeletonCard';
 
 type Product = {
   id: number;
@@ -18,59 +21,77 @@ type Product = {
   thumbnail: string;
 };
 
+// ✅ Fetch Function (defined before useQuery)
 const fetchProduct = async (id: string): Promise<Product> => {
   const res = await fetch(`https://dummyjson.com/products/${id}`);
+  if (res.status === 404) notFound();
   if (!res.ok) throw new Error('Failed to fetch product');
   return res.json();
 };
 
-function renderStars(rating: number) {
-  const stars = [];
-  const fullStars = Math.floor(rating);
-  const hasHalfStar = rating % 1 >= 0.5;
-
-  for (let i = 0; i < fullStars; i++) {
-    stars.push(<AiFillStar key={`full-${i}`} className="text-yellow-500 text-xl" />);
-  }
-
-  if (hasHalfStar) {
-    stars.push(<FaStarHalfAlt key="half" className="text-yellow-500 text-xl" />);
-  }
-
-  while (stars.length < 5) {
-    stars.push(<AiOutlineStar key={`empty-${stars.length}`} className="text-yellow-500 text-xl" />);
-  }
-
-  return <div className="flex items-center gap-1">{stars}</div>;
-}
-
-export default function ProductDetailPage() {
+export default function ProductDetails() {
+  const [showSkeletons, setShowSkeletons] = useState(false);
   const params = useParams();
   const id = params?.id as string;
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSkeletons(true);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const {
     data: product,
     isLoading,
-    isError
+    isError,
   } = useQuery({
     queryKey: ['product', id],
     queryFn: () => fetchProduct(id),
+    retry: false, // prevent retries for 404
   });
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-lg text-gray-600">
-        Loading product details...
-      </div>
+      <>
+        {!showSkeletons ? (
+          <div className="flex justify-center items-center min-h-[40vh]">
+            <Spinner />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
+            {Array.from({ length: 8 }).map((_, index) => (
+              <SkeletonCard key={index} />
+            ))}
+          </div>
+        )}
+      </>
     );
   }
 
   if (isError || !product) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-red-500 text-lg">
-        Failed to load product. Please try again later.
-      </div>
-    );
+    notFound(); // ✅ Send to custom 404
+  }
+
+  function renderStars(rating: number) {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(<FaStar key={`full-${i}`} className="text-yellow-500 text-xl" />);
+    }
+
+    if (hasHalfStar) {
+      stars.push(<FaStarHalfAlt key="half" className="text-yellow-500 text-xl" />);
+    }
+
+    while (stars.length < 5) {
+      stars.push(<FaRegStar key={`empty-${stars.length}`} className="text-yellow-500 text-xl" />);
+    }
+
+
+    return <div className="flex items-center gap-1">{stars}</div>;
   }
 
   return (
@@ -85,7 +106,9 @@ export default function ProductDetailPage() {
       </header>
 
       <div className="max-w-4xl mx-auto p-4 bg-white dark:bg-gray-900 shadow-md rounded-lg mt-[10vh]">
-        <h1 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">{product.title}</h1>
+        <h1 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">
+          {product.title}
+        </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
           <Image
